@@ -6,7 +6,7 @@ from lightning.pytorch.utilities.types import STEP_OUTPUT
 from torchmetrics import Accuracy, MetricCollection
 
 
-class MNISTModel1(L.LightningModule):
+class MNISTModel(L.LightningModule):
     def __init__(
         self,
         input_size: int = 28 * 28,
