@@ -3,7 +3,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+/LabelDataObstetrics
+/LabelDataObstetrics1
+/Study
+/results
 # C extensions
 *.so
 
