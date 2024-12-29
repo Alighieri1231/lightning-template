@@ -4,6 +4,7 @@ from lightning.pytorch.loggers import WandbLogger
 import torch
 from segmentation_datamodule import SegmentationDataModule
 from unet_lightning_module import UNetLightningModule
+from lightning.pytorch.utilities.seed import seed_everything
 
 if __name__ == "__main__":
     """
@@ -12,6 +13,7 @@ if __name__ == "__main__":
     Configuration should be provided through a YAML file, e.g.:
     lightning run train --config=config.yaml
     """
+    seed_everything(42)  # Replace 42 with your desired seed
 
     # Set matrix multiplication precision to high
     torch.set_float32_matmul_precision("high")

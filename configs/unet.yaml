@@ -12,11 +12,11 @@ model:
     gamma: 0.1
   num_classes: 6
 datamodule:
-  data_path: "data_directory"
-  train_csv: "train.csv"
-  val_csv: "val.csv"
-  test_csv: "test.csv"
-  batch_size: 8
+  data_path: "data"
+  train_csv: "results/test.csv"
+  val_csv: "results/test.csv"
+  test_csv: "results/test.csv"
+  batch_size: 2
   num_workers: 4
 trainer:
   max_epochs: 50
@@ -24,6 +24,7 @@ trainer:
   precision: 16
   devices: 2
   log_every_n_steps: 10
+  seed_everything: 42 # Seed for reproducibility
 callbacks:
   - class_path: lightning.pytorch.callbacks.EarlyStopping
     init_args:
