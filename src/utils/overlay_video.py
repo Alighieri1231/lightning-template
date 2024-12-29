@@ -1,6 +1,7 @@
 # convert to function
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 
 # Función para asignar colores a las máscaras
@@ -15,7 +16,7 @@ def apply_colors(mask_combined, colors):
 
 
 def generate_overlay_video(
-    groundtruth, one_hot, fps=15, output_video="output_video.mp4"
+    groundtruth, one_hot, fps=15, output_video="output_video.mp4", gt_w=False
 ):
     # Supongamos que `groundtruth` y `one_hot_mask` son tus datos:
     # - `groundtruth` tiene la forma (696, 1053, 1219)
@@ -35,7 +36,8 @@ def generate_overlay_video(
     category_names = ["Background", "Heart", "Head", "Abdomen", "Chest", "Placenta"]
 
     frame_size = (groundtruth.shape[2], groundtruth.shape[1])  # (ancho, alto)
-
+    if gt_w:
+        frame_size = (groundtruth.shape[2] * 2, groundtruth.shape[1])  # (ancho, alto)
     # Crear el objeto de video
     fourcc = cv2.VideoWriter_fourcc(*"XVID")
     video_writer = cv2.VideoWriter(output_video, fourcc, fps, frame_size)
@@ -76,10 +78,13 @@ def generate_overlay_video(
                 1,
                 cv2.LINE_AA,
             )
+        if gt_w:
+            # concatenate the ground truth to overlay in the left side
+
+            overlay = np.concatenate((gt_rgb, overlay), axis=1)
 
         # Escribir el frame en el video
         video_writer.write(overlay)
-
     # Liberar el objeto de video
     video_writer.release()
     print(f"Video guardado como {output_video}")

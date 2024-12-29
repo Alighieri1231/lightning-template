@@ -1,0 +1,39 @@
+model:
+  model:
+    in_channels: 1
+    out_channels: 6
+    f_maps: 64
+  loss: CrossEntropyLoss
+  optimizer: Adam
+  optimizer_params:
+    lr: 0.001
+  scheduler_params:
+    step_size: 10
+    gamma: 0.1
+  num_classes: 6
+datamodule:
+  data_path: "data_directory"
+  train_csv: "train.csv"
+  val_csv: "val.csv"
+  test_csv: "test.csv"
+  batch_size: 8
+  num_workers: 4
+trainer:
+  max_epochs: 50
+  accelerator: gpu
+  precision: 16
+  devices: 2
+  log_every_n_steps: 10
+callbacks:
+  - class_path: lightning.pytorch.callbacks.EarlyStopping
+    init_args:
+      monitor: val/loss
+      patience: 5
+      mode: min
+  - class_path: lightning.pytorch.callbacks.ModelCheckpoint
+    init_args:
+      dirpath: "checkpoints/"  # Directory to save the model
+      filename: "best-checkpoint-{epoch:02d}-{val_loss:.2f}"  # Custom filename pattern
+      save_top_k: 1
+      monitor: "val/loss"
+      mode: "min"
