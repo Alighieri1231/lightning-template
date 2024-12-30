@@ -38,14 +38,14 @@ class SegmentationDataset(Dataset):
             ),  # Add channel dimension
         )
 
-        #transform = tio.Compose(
+        # transform = tio.Compose(
         #    [
         #        tio.Resize((128, 128, 128)),  # Resize to desired shape
         #        #tio.RescaleIntensity((0, 1), include=["video_gt"]),  # Normalize to [0, 1]
         #    ]
-        #)
+        # )
         # Apply transform
-        #resized_subject = transform(subject)
+        # resized_subject = transform(subject)
 
         # # efine the resize transform
         resize_transform = tio.transforms.Resize(
@@ -57,19 +57,21 @@ class SegmentationDataset(Dataset):
 
         # # Extract resized video GT and label from the subject
         video = resized_subject.video_gt.tensor  # Remove channel dimension
-        label = resized_subject.label.tensor.squeeze(0).long()  # Ensure integers for label
+        label = resized_subject.label.tensor.squeeze(
+            0
+        ).long()  # Ensure integers for label
 
         # # Normalize video values to [0, 1]
         video = video.float() / 255.0
 
         # # Convert to PyTorch tensors
-        #video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
-        #label = torch.from_numpy(label).long()
+        # video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
+        # label = torch.from_numpy(label).long()
         # print(label.shape)
 
         # # Apply transform if provided
         if self.transform:
-           video, label = self.transform((video, label))
+            video, label = self.transform((video, label))
 
         return subject
 
@@ -109,7 +111,7 @@ class SegmentationDataModule(L.LightningDataModule):
         self.val_dataset = SegmentationDataset(val_files, self.data_path)
         self.test_dataset = SegmentationDataset(test_files, self.data_path)
 
-	def train_dataloader(self):
+    def train_dataloader(self):
         return DataLoader(
             self.train_dataset,
             batch_size=self.batch_size,
@@ -131,30 +133,32 @@ class SegmentationDataModule(L.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             shuffle=False,
-        )    
-	#def train_dataloader(self):
-    #    return tio.data.SubjectsLoader(
-    #        self.train_dataset,
-    #        batch_size=self.batch_size,
-    #        num_workers=self.num_workers,
-    #        shuffle=True,
-    #    )
+        )
 
-    #def val_dataloader(self):
-    #    return tio.data.SubjectsLoader(
-    #        self.val_dataset,
-    #        batch_size=self.batch_size,
-    #        num_workers=self.num_workers,
-    #        shuffle=False,
-    #    )
 
-    #def test_dataloader(self):
-    #    return tio.data.SubjectsLoader(
-    #        self.test_dataset,
-    #        batch_size=self.batch_size,
-    #        num_workers=self.num_workers,
-    #        shuffle=False,
-    #    )
+# def train_dataloader(self):
+#    return tio.data.SubjectsLoader(
+#        self.train_dataset,
+#        batch_size=self.batch_size,
+#        num_workers=self.num_workers,
+#        shuffle=True,
+#    )
+
+# def val_dataloader(self):
+#    return tio.data.SubjectsLoader(
+#        self.val_dataset,
+#        batch_size=self.batch_size,
+#        num_workers=self.num_workers,
+#        shuffle=False,
+#    )
+
+# def test_dataloader(self):
+#    return tio.data.SubjectsLoader(
+#        self.test_dataset,
+#        batch_size=self.batch_size,
+#        num_workers=self.num_workers,
+#        shuffle=False,
+#    )
 
 
 # Example usage:
