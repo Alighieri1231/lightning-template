@@ -62,9 +62,10 @@ class UNetLightningModule(L.LightningModule):
 
     def shared_step(self, batch, step: str):
         # batch is subject from torchio made by video_gt and label
-        inputs = batch.video_gt.tensor
-        # print(inputs)
-        targets = batch.label.tensor.squeeze(0).long()
+        inputs = batch["video_gt"]
+        print(inputs)
+        targets = batch["label"]
+        print(targets)
         # inputs, targets = batch
         outputs = self(inputs)
         loss = self.loss_fn(outputs, targets)
