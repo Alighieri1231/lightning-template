@@ -34,10 +34,13 @@ class SegmentationDataset(Dataset):
         # Convert to PyTorch tensors
         video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
         label = torch.from_numpy(label).long()
+        print(video.shape)
+        print(label.shape)
 
         # Apply transform if provided
         if self.transform:
             video, label = self.transform((video, label))
+
 
         return video, label
 

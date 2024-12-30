@@ -1,4 +1,4 @@
-from .glue_datamodule import GLUEDataModule
-from .mnist_datamodule import MNISTDataModule
+from src.datamodules.glue_datamodule import GLUEDataModule
+from src.datamodules.mnist_datamodule import MNISTDataModule
 
 __all__ = ["GLUEDataModule", "MNISTDataModule"]

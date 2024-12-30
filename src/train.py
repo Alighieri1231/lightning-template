@@ -22,8 +22,8 @@ if __name__ == "__main__":
     L.seed_everything(42)  # Replace 42 with your desired seed
 
     # Set matrix multiplication precision to high
-    # torch.set_float32_matmul_precision("high")
+    torch.set_float32_matmul_precision("high")
 
     # Initialize the Wandb logger
-    wandb_logger = WandbLogger(project="unet_segmentation", log_model=True)
+    wandb_logger = WandbLogger(project="bluehive", log_model=True)
     cli_main()

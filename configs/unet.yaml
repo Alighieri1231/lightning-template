@@ -14,12 +14,12 @@ data:
   train_csv: "results/test.csv"
   val_csv: "results/test.csv"
   test_csv: "results/test.csv"
-  batch_size: 2
-  num_workers: 4
+  batch_size: 1
+  num_workers: 1
 trainer:
   max_epochs: 2
-  accelerator: mps
-  precision: 16
-  devices: 1
+  accelerator: gpu
+  precision: bf16-mixed
+  devices: 2
   log_every_n_steps: 10
 seed_everything: 42 # Seed for reproducibility
