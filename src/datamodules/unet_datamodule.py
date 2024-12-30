@@ -37,33 +37,43 @@ class SegmentationDataset(Dataset):
                 tensor=np.expand_dims(label, axis=0)
             ),  # Add channel dimension
         )
-        # efine the resize transform
-        resize_transform = tio.transforms.Resize(
-            (128, 128, 128)
-        )  # New shape: [frames, width, height]
 
-        # Apply the resize transform to the subject
-        resized_subject = resize_transform(subject)
+        transform = tio.Compose(
+            [
+                tio.Resize((128, 128, 128)),  # Resize to desired shape
+                tio.RescaleIntensity((0, 1), include="video_gt"),  # Normalize to [0, 1]
+            ]
+        )
+        # Apply transform
+        subject = transform(subject)
 
-        # Extract resized video GT and label from the subject
-        video = resized_subject.video_gt.tensor  # Remove channel dimension
-        label = resized_subject.label.tensor.squeeze(
-            0
-        ).long()  # Ensure integers for label
+        # # efine the resize transform
+        # resize_transform = tio.transforms.Resize(
+        #     (128, 128, 128)
+        # )  # New shape: [frames, width, height]
 
-        # Normalize video values to [0, 1]
-        video = video.float() / 255.0
+        # # Apply the resize transform to the subject
+        # resized_subject = resize_transform(subject)
 
-        # Convert to PyTorch tensors
-        # video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
-        # label = torch.from_numpy(label).long()
-        print(label.shape)
+        # # Extract resized video GT and label from the subject
+        # video = resized_subject.video_gt.tensor  # Remove channel dimension
+        # label = resized_subject.label.tensor.squeeze(
+        #     0
+        # ).long()  # Ensure integers for label
 
-        # Apply transform if provided
-        if self.transform:
-            video, label = self.transform((video, label))
+        # # Normalize video values to [0, 1]
+        # video = video.float() / 255.0
 
-        return video, label
+        # # Convert to PyTorch tensors
+        # # video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
+        # # label = torch.from_numpy(label).long()
+        # print(label.shape)
+
+        # # Apply transform if provided
+        # if self.transform:
+        #     video, label = self.transform((video, label))
+
+        return subject
 
 
 class SegmentationDataModule(L.LightningDataModule):
