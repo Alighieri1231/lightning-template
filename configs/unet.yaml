@@ -21,6 +21,7 @@ trainer:
   max_epochs: 10
   accelerator: gpu
   precision: bf16-mixed
+  strategy: ddp
   devices: 4
   log_every_n_steps: 10
 seed_everything: 42 # Seed for reproducibility
