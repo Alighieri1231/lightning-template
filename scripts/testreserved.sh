@@ -2,6 +2,7 @@
 
 #SBATCH -p reserved --reservation=bcastane_12222024
 #SBATCH --gres=gpu:4
+#SBATCH --mem=128G
 #SBATCH --output=test_reserved.log
 
 source /software/anaconda3/5.3.0b/bin/activate /scratch/eochoaal/my-conda/lightning
@@ -14,6 +15,8 @@ export CUDA_HOME=/scratch/eochoaal/my-conda/lightning
 
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 echo "Using CUDA_HOME: $CUDA_HOME"
+
+free -h
 nvidia-smi
 
 export PYTHONPATH=$PYTHONPATH:/gpfs/fs2/scratch/eochoaal/ligthing-template/src
