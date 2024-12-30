@@ -12,7 +12,7 @@ model:
       upsample: 'deconv'
 data:
   data_path: "data"
-  train_csv: "results/test.csv"
+  train_csv: "results/train.csv"
   val_csv: "results/test.csv"
   test_csv: "results/test.csv"
   batch_size: 1
