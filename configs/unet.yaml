@@ -9,6 +9,7 @@ model:
     model:
       in_channels: 1
       out_channels: 6
+      upsample: 'deconv'
 data:
   data_path: "data"
   train_csv: "results/test.csv"
