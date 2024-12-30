@@ -40,7 +40,7 @@ class SegmentationDataset(Dataset):
 
         # efine the resize transform
         resize_transform = tio.transforms.Resize(
-            (256, 256, 256)
+            (128,128,128)
         )  # New shape: [frames, width, height]
 
         # Apply the resize transform to the subject
@@ -48,16 +48,16 @@ class SegmentationDataset(Dataset):
 
         # Extract resized video GT and label from the subject
         video = resized_subject.video_gt.tensor  # Remove channel dimension
-        label = resized_subject.label.tensor.long()  # Ensure integers for label
+        label = resized_subject.label.tensor.squeeze(0).long()  # Ensure integers for label
 
         # Normalize video values to [0, 1]
-        video = video.astype(np.float32) / 255.0
+        video = video.float() / 255.0
 
         # Convert to PyTorch tensors
-        # video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
-        # label = torch.from_numpy(label).long()
-        print(video.shape)
-        print(label.shape)
+        #video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
+        #label = torch.from_numpy(label).long()
+        #print(video.shape)
+        #print(label.shape)
 
         # Apply transform if provided
         if self.transform:
