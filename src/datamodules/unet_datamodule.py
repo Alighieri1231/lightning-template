@@ -73,7 +73,7 @@ class SegmentationDataset(Dataset):
         if self.transform:
             video, label = self.transform((video, label))
 
-        return subject
+        return video, label
 
 
 class SegmentationDataModule(L.LightningDataModule):
