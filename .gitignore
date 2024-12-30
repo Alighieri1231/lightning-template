@@ -139,3 +139,6 @@ dmypy.json
 !/models/.gitkeep
 /results/*
 !/results/.gitkeep
+/wandb
+/checkpoints
+/lightning_logs
