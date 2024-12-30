@@ -38,42 +38,36 @@ class SegmentationDataset(Dataset):
             ),  # Add channel dimension
         )
 
-        # transform = tio.Compose(
-        #    [
-        #        tio.Resize((128, 128, 128)),  # Resize to desired shape
-        #        #tio.RescaleIntensity((0, 1), include=["video_gt"]),  # Normalize to [0, 1]
-        #    ]
-        # )
-        # Apply transform
-        # resized_subject = transform(subject)
+        # apply compose transform made by resize and rescaleintensity
+        resize_transform = tio.Compose(
+            [
+                tio.transforms.Resize((128, 128, 128)),
+                tio.transforms.RescaleIntensity((0, 1), include=["video_gt"]),
+            ]
+        )
 
-        # # efine the resize transform
-        resize_transform = tio.transforms.Resize(
-            (128, 128, 128)
-        )  # New shape: [frames, width, height]
+        # # define the resize transform
+        # resize_transform = tio.transforms.Resize(
+        #     (128, 128, 128)
+        # )  # New shape: [frames, width, height]
 
         # # Apply the resize transform to the subject
-        resized_subject = resize_transform(subject)
+        subject = resize_transform(subject)
 
-        # # Extract resized video GT and label from the subject
-        video = resized_subject.video_gt.tensor  # Remove channel dimension
-        label = resized_subject.label.tensor.squeeze(
-            0
-        ).long()  # Ensure integers for label
+        # # # Extract resized video GT and label from the subject
+        # video = resized_subject.video_gt.tensor  # Remove channel dimension
+        # label = resized_subject.label.tensor.squeeze(
+        #     0
+        # ).long()  # Ensure integers for label
 
-        # # Normalize video values to [0, 1]
-        video = video.float() / 255.0
+        # # # Normalize video values to [0, 1]
+        # video = video.float() / 255.0
 
-        # # Convert to PyTorch tensors
-        # video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
-        # label = torch.from_numpy(label).long()
-        # print(label.shape)
+        # # # Apply transform if provided
+        # if self.transform:
+        #     video, label = self.transform((video, label))
 
-        # # Apply transform if provided
-        if self.transform:
-            video, label = self.transform((video, label))
-
-        return video, label
+        return subject
 
 
 class SegmentationDataModule(L.LightningDataModule):
@@ -111,8 +105,9 @@ class SegmentationDataModule(L.LightningDataModule):
         self.val_dataset = SegmentationDataset(val_files, self.data_path)
         self.test_dataset = SegmentationDataset(test_files, self.data_path)
 
+    # using subjectdataloaders from torchio
     def train_dataloader(self):
-        return DataLoader(
+        return tio.data.SubjectLoader(
             self.train_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
@@ -120,7 +115,7 @@ class SegmentationDataModule(L.LightningDataModule):
         )
 
     def val_dataloader(self):
-        return DataLoader(
+        return tio.data.SubjectLoader(
             self.val_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
@@ -128,47 +123,33 @@ class SegmentationDataModule(L.LightningDataModule):
         )
 
     def test_dataloader(self):
-        return DataLoader(
+        return tio.data.SubjectLoader(
             self.test_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             shuffle=False,
         )
 
+    # def train_dataloader(self):
+    #     return DataLoader(
+    #         self.train_dataset,
+    #         batch_size=self.batch_size,
+    #         num_workers=self.num_workers,
+    #         shuffle=True,
+    #     )
 
-# def train_dataloader(self):
-#    return tio.data.SubjectsLoader(
-#        self.train_dataset,
-#        batch_size=self.batch_size,
-#        num_workers=self.num_workers,
-#        shuffle=True,
-#    )
+    # def val_dataloader(self):
+    #     return DataLoader(
+    #         self.val_dataset,
+    #         batch_size=self.batch_size,
+    #         num_workers=self.num_workers,
+    #         shuffle=False,
+    #     )
 
-# def val_dataloader(self):
-#    return tio.data.SubjectsLoader(
-#        self.val_dataset,
-#        batch_size=self.batch_size,
-#        num_workers=self.num_workers,
-#        shuffle=False,
-#    )
-
-# def test_dataloader(self):
-#    return tio.data.SubjectsLoader(
-#        self.test_dataset,
-#        batch_size=self.batch_size,
-#        num_workers=self.num_workers,
-#        shuffle=False,
-#    )
-
-
-# Example usage:
-# datamodule = SegmentationDataModule(
-#     data_path="data_directory",
-#     train_csv="train.csv",
-#     val_csv="val.csv",
-#     test_csv="test.csv",
-#     batch_size=8,
-#     num_workers=4
-# )
-# datamodule.setup()
-# train_loader = datamodule.train_dataloader()
+    # def test_dataloader(self):
+    #     return DataLoader(
+    #         self.test_dataset,
+    #         batch_size=self.batch_size,
+    #         num_workers=self.num_workers,
+    #         shuffle=False,
+    #     )
