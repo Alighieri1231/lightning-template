@@ -107,7 +107,7 @@ class SegmentationDataModule(L.LightningDataModule):
 
     # using subjectdataloaders from torchio
     def train_dataloader(self):
-        return tio.data.SubjectLoader(
+        return tio.data.SubjectsLoader(
             self.train_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
@@ -115,7 +115,7 @@ class SegmentationDataModule(L.LightningDataModule):
         )
 
     def val_dataloader(self):
-        return tio.data.SubjectLoader(
+        return tio.data.SubjectsLoader(
             self.val_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
@@ -123,7 +123,7 @@ class SegmentationDataModule(L.LightningDataModule):
         )
 
     def test_dataloader(self):
-        return tio.data.SubjectLoader(
+        return tio.data.SubjectsLoader(
             self.test_dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
