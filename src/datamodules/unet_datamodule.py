@@ -33,9 +33,7 @@ class SegmentationDataset(Dataset):
             video_gt=tio.ScalarImage(
                 tensor=np.expand_dims(video, axis=0)
             ),  # Add channel dimension
-            label=tio.LabelMap(
-                tensor=np.expand_dims(label, axis=0)
-            ),  # Add channel dimension
+            label=tio.LabelMap(tensor=label),  # Add channel dimension
         )
 
         # apply compose transform made by resize and rescaleintensity
