@@ -1,10 +1,16 @@
-import lightning.pytorch as pl
+import lightning as L
 from lightning.pytorch.cli import LightningCLI
 from lightning.pytorch.loggers import WandbLogger
 import torch
-from segmentation_datamodule import SegmentationDataModule
-from unet_lightning_module import UNetLightningModule
-from lightning.pytorch.utilities.seed import seed_everything
+from src.datamodules.unet_datamodule import SegmentationDataModule
+from src.models.unet_model import UNetLightningModule
+
+
+def cli_main():
+    cli = LightningCLI(
+        model_class=UNetLightningModule, datamodule_class=SegmentationDataModule
+    )
+
 
 if __name__ == "__main__":
     """
@@ -13,21 +19,11 @@ if __name__ == "__main__":
     Configuration should be provided through a YAML file, e.g.:
     lightning run train --config=config.yaml
     """
-    seed_everything(42)  # Replace 42 with your desired seed
+    L.seed_everything(42)  # Replace 42 with your desired seed
 
     # Set matrix multiplication precision to high
-    torch.set_float32_matmul_precision("high")
+    # torch.set_float32_matmul_precision("high")
 
     # Initialize the Wandb logger
     wandb_logger = WandbLogger(project="unet_segmentation", log_model=True)
-
-    LightningCLI(
-        model_class=UNetLightningModule,
-        datamodule_class=SegmentationDataModule,
-        trainer_defaults={
-            "logger": wandb_logger,
-            "strategy": "ddp",  # DistributedDataParallel for multi-GPU
-            "precision": 16,  # Use mixed precision training,
-            "log_every_n_steps": 10,  # Log metrics every 10 steps
-        },
-    )
+    cli_main()

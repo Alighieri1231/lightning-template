@@ -1,4 +1,4 @@
-import pytorch_lightning as pl
+import lightning as L
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam, SGD
@@ -10,43 +10,46 @@ from torchmetrics import (
     Dice,
     JaccardIndex,
 )
-from model import (
-    AbstractUNet,
+from src.models.model import (
+    UNet3D,
 )  # Replace with the actual class name from your model file
-from losses import get_loss_function  # A utility to dynamically load loss functions
+from src.utils.ls import (
+    get_loss_function,
+)  # A utility to dynamically load loss functions
 from torch.optim.lr_scheduler import StepLR  # Example of a scheduler
 
 
-class UNetLightningModule(pl.LightningModule):
+class UNetLightningModule(L.LightningModule):
     def __init__(self, config: dict):
         super().__init__()
-        self.save_hyperparameters(config)  # Save the config for reproducibility
+        # self.save_hyperparameters(config)  # Save the config for reproducibility
 
         # Model configuration
         model_params = config.get("model", {})
-        self.model = AbstractUNet(**model_params)
+        self.model = UNet3D(**model_params)
 
         # Loss function configuration
         self.loss_fn = get_loss_function(config.get("loss", "CrossEntropyLoss"))
-
+        # self.loss_fn = criterion
         # Optimizer configuration
         self.optimizer_name = config.get("optimizer", "Adam")
-        self.optimizer_params = config.get("optimizer_params", {"lr": 1e-3})
+        self.learning_rate = config.get("lr", 1e-3)  # Acceso directo a lr
+        self.optimizer_params = {"lr": self.learning_rate}
 
         # Scheduler configuration
-        self.scheduler_params = config.get(
-            "scheduler_params", {"step_size": 10, "gamma": 0.1}
-        )
-
+        self.step_size = config.get("step_size", 10)
+        self.gamma = config.get("gamma", 0.1)
+        self.scheduler_params = {"step_size": self.step_size, "gamma": self.gamma}
         # Metrics
         num_classes = config.get("num_classes", 2)
+        # metrics for segmentation
         metrics = MetricCollection(
             {
-                "accuracy": Accuracy(),
-                "precision": Precision(),
-                "recall": Recall(),
+                "accuracy": Accuracy(task="multiclass", num_classes=num_classes),
+                "precision": Precision(task="multiclass", num_classes=num_classes),
+                "recall": Recall(task="multiclass", num_classes=num_classes),
                 "dice": Dice(num_classes=num_classes),
-                "iou": JaccardIndex(num_classes=num_classes),
+                "iou": JaccardIndex(num_classes=num_classes, task="multiclass"),
             }
         )
 

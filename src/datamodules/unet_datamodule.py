@@ -1,4 +1,4 @@
-import pytorch_lightning as pl
+import lightning as L
 import numpy as np
 import pandas as pd
 import torch
@@ -42,7 +42,7 @@ class SegmentationDataset(Dataset):
         return video, label
 
 
-class SegmentationDataModule(pl.LightningDataModule):
+class SegmentationDataModule(L.LightningDataModule):
     def __init__(
         self, data_path, train_csv, val_csv, test_csv, batch_size=4, num_workers=4
     ):
