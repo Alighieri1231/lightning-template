@@ -24,4 +24,5 @@ trainer:
   strategy: ddp
   devices: 4
   log_every_n_steps: 10
+  profiler: pytorch
 seed_everything: 42 # Seed for reproducibility
