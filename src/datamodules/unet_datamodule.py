@@ -5,6 +5,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 from pathlib import Path
 from torchvision.transforms import functional as F
+import torchio as tio
 
 
 class SegmentationDataset(Dataset):
@@ -28,19 +29,39 @@ class SegmentationDataset(Dataset):
         video = data["video"]  # Shape: (256, 512, 512)
         label = data["label"]  # Shape: (256, 512, 512)
 
+        subject = tio.Subject(
+            video_gt=tio.ScalarImage(
+                tensor=np.expand_dims(video, axis=0)
+            ),  # Add channel dimension
+            label=tio.LabelMap(
+                tensor=np.expand_dims(label, axis=0)
+            ),  # Add channel dimension
+        )
+
+        # efine the resize transform
+        resize_transform = tio.transforms.Resize(
+            (256, 256, 256)
+        )  # New shape: [frames, width, height]
+
+        # Apply the resize transform to the subject
+        resized_subject = resize_transform(subject)
+
+        # Extract resized video GT and label from the subject
+        video = resized_subject.video_gt.tensor  # Remove channel dimension
+        label = resized_subject.label.tensor.long()  # Ensure integers for label
+
         # Normalize video values to [0, 1]
         video = video.astype(np.float32) / 255.0
 
         # Convert to PyTorch tensors
-        video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
-        label = torch.from_numpy(label).long()
+        # video = torch.from_numpy(video).unsqueeze(0)  # Add channel dimension
+        # label = torch.from_numpy(label).long()
         print(video.shape)
         print(label.shape)
 
         # Apply transform if provided
         if self.transform:
             video, label = self.transform((video, label))
-
 
         return video, label
 
