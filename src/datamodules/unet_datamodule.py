@@ -29,6 +29,7 @@ class SegmentationDataset(Dataset):
         return len(self.file_paths)
 
     def __getitem__(self, idx):
+        print(self.data_path)
         base_name = Path(self.file_paths[idx]).stem  # Strip .npz extension
         video_path = self.data_path / f"{base_name}_gt.npy"
         label_path = self.data_path / f"{base_name}_label.npy"
