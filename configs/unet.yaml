@@ -7,10 +7,21 @@ model:
     gamma: 0.1
     num_classes: 2
     model:
-      in_channels: 1
-      out_channels: 2
-      #upsample: 'deconv'
-      f_maps: 32
+        in_channels: 1               # Match input channels of the simpler Unet
+        out_channels: 1              # Match output channels of the simpler Unet
+        #final_sigmoid: True          # Apply Sigmoid activation for segmentation
+        basic_module: DoubleConv     # Use DoubleConv as the basic block
+        f_maps: 64       # Feature maps for each level of the encoder
+        num_levels: 3                # Match the 3-level depth of the simpler Unet
+        layer_order: 'crg'           # Conv -> ReLU -> GroupNorm
+        num_groups: 1                # GroupNorm with 1 group = InstanceNorm
+        is_segmentation: True        # Specify this as a segmentation task
+        conv_kernel_size: 3          # Standard kernel size
+        pool_kernel_size: 2          # Standard pooling size
+        conv_padding: 1              # Padding to maintain spatial dimensions
+        upsample: 'trilinear'        # Use trilinear upsampling
+        dropout_prob: 0.5            # Match dropout probability of the simpler Unet
+        is3d: True                   # Ensure this is a 3D Unet
 data:
   data_path: "data/128x128x128"
   train_csv: "results/train.csv"
