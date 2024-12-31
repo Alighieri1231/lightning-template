@@ -10,7 +10,7 @@ import torchio as tio
 
 def numpy_reader(path):
     data = np.expand_dims(np.load(path), axis=0)  # Ensure channel dimension
-    return data
+    return data, np.eye(4)
 
 
 class SegmentationDataset(Dataset):
