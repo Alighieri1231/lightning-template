@@ -86,14 +86,14 @@ model:
     model:
       in_channels: 1
       out_channels: 6
-      upsample: deconv
+      f_maps: 32
 data:
-  data_path: data
+  data_path: data/128x128x128
   train_csv: results/train.csv
   val_csv: results/test.csv
   test_csv: results/test.csv
   batch_size: 1
-  num_workers: 1
+  num_workers: 16
 optimizer: null
 lr_scheduler: null
 ckpt_path: null
