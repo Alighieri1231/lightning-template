@@ -42,21 +42,21 @@ class UNetLightningModule(L.LightningModule):
         self.gamma = config.get("gamma", 0.1)
         self.scheduler_params = {"step_size": self.step_size, "gamma": self.gamma}
         # Metrics
-        num_classes = config.get("num_classes", 2)
+        # num_classes = config.get("num_classes", 2)
         # metrics for segmentation
-        metrics = MetricCollection(
-            {
-                "accuracy": Accuracy(task="multiclass", num_classes=num_classes),
-                "precision": Precision(task="multiclass", num_classes=num_classes),
-                "recall": Recall(task="multiclass", num_classes=num_classes),
-                "dice": Dice(num_classes=num_classes),
-                "iou": JaccardIndex(num_classes=num_classes, task="multiclass"),
-            }
-        )
+        # metrics = MetricCollection(
+        #     {
+        #         "accuracy": Accuracy(task="multiclass", num_classes=num_classes),
+        #         "precision": Precision(task="multiclass", num_classes=num_classes),
+        #         "recall": Recall(task="multiclass", num_classes=num_classes),
+        #         "dice": Dice(num_classes=num_classes),
+        #         "iou": JaccardIndex(num_classes=num_classes, task="multiclass"),
+        #     }
+        # )
 
-        self.train_metrics = metrics.clone(prefix="train/")
-        self.val_metrics = metrics.clone(prefix="val/")
-        self.test_metrics = metrics.clone(prefix="test/")
+        # self.train_metrics = metrics.clone(prefix="train/")
+        # self.val_metrics = metrics.clone(prefix="val/")
+        # self.test_metrics = metrics.clone(prefix="test/")
 
     def forward(self, x):
         return self.model(x)
@@ -68,13 +68,13 @@ class UNetLightningModule(L.LightningModule):
         # inputs, targets = batch
         outputs = self(inputs)
         loss = self.loss_fn(outputs, targets)
-        preds = torch.argmax(outputs, dim=1)
+        # preds = torch.argmax(outputs, dim=1)
 
-        metrics = getattr(self, f"{step}_metrics")
-        metrics.update(preds, targets)
+        # metrics = getattr(self, f"{step}_metrics")
+        # metrics.update(preds, targets)
 
         self.log(f"{step}/loss", loss)
-        self.log_dict(metrics, prog_bar=True)
+        # self.log_dict(metrics, prog_bar=True)
 
         return loss
 
