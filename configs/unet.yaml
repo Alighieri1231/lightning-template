@@ -9,7 +9,8 @@ model:
     model:
       in_channels: 1
       out_channels: 6
-      upsample: 'deconv'
+      #upsample: 'deconv'
+      f_maps: 32
 data:
   data_path: "data/128x128x128"
   train_csv: "results/train.csv"
