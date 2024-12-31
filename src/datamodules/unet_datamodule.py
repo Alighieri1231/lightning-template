@@ -42,6 +42,10 @@ class SegmentationDataset(Dataset):
         resize_transform = tio.Compose(
             [
                 # tio.transforms.Resize((128, 128, 128)),
+                # remap all the labels different from 0 to 1
+                tio.transforms.RemapLabels(
+                    {2: 1, 3: 1, 4: 1, 5: 1, 6: 1}, include=["label"]
+                ),
                 tio.transforms.RescaleIntensity((0, 1), include=["video_gt"]),
             ]
         )
