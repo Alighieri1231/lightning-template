@@ -17,6 +17,7 @@ from src.utils.ls import (
     get_loss_function,
 )  # A utility to dynamically load loss functions
 from torch.optim.lr_scheduler import StepLR  # Example of a scheduler
+import gc
 
 
 class UNetLightningModule(L.LightningModule):
@@ -98,3 +99,9 @@ class UNetLightningModule(L.LightningModule):
         # Optionally add a scheduler
         scheduler = StepLR(optimizer, **self.scheduler_params)
         return [optimizer], [scheduler]
+
+    def on_train_epoch_end(self):
+        """Hook que se ejecuta al final de cada época de entrenamiento."""
+        torch.cuda.empty_cache()
+        gc.collect()
+        self.log("info/memory_cleaned", 1)  # Log para verificar que se ejecutó

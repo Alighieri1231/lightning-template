@@ -112,6 +112,7 @@ class SegmentationDataModule(L.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             shuffle=True,
+            pin_memory=True,
         )
 
     def val_dataloader(self):
@@ -120,6 +121,7 @@ class SegmentationDataModule(L.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             shuffle=False,
+            pin_memory=True,
         )
 
     def test_dataloader(self):
@@ -128,6 +130,7 @@ class SegmentationDataModule(L.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             shuffle=False,
+            pin_memory=True,
         )
 
     # def train_dataloader(self):
