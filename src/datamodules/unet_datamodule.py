@@ -8,6 +8,11 @@ from torchvision.transforms import functional as F
 import torchio as tio
 
 
+def numpy_reader(path):
+    data = np.expand_dims(np.load(path), axis=0)  # Ensure channel dimension
+    return data
+
+
 class SegmentationDataset(Dataset):
     def __init__(self, file_paths, data_path, transform=None):
         """
@@ -24,24 +29,19 @@ class SegmentationDataset(Dataset):
         return len(self.file_paths)
 
     def __getitem__(self, idx):
-        file_path = self.data_path / self.file_paths[idx]
-        data = np.load(file_path)
-        video = data["video"]  # Shape: (256, 512, 512)
-        label = data["label"]  # Shape: (256, 512, 512)
+        base_name = Path(self.file_paths[idx]).stem  # Strip .npz extension
+        video_path = self.data_path / f"{base_name}_gt.npy"
+        label_path = self.data_path / f"{base_name}_label.npy"
 
         subject = tio.Subject(
-            video_gt=tio.ScalarImage(
-                tensor=np.expand_dims(video, axis=0)
-            ),  # Add channel dimension
-            label=tio.LabelMap(
-                tensor=np.expand_dims(label, axis=0)
-            ),  # Add channel dimension
+            video_gt=tio.ScalarImage(video_path, reader=numpy_reader),
+            label=tio.LabelMap(label_path, reader=numpy_reader),
         )
 
         # apply compose transform made by resize and rescaleintensity
         resize_transform = tio.Compose(
             [
-                tio.transforms.Resize((128, 128, 128)),
+                # tio.transforms.Resize((128, 128, 128)),
                 tio.transforms.RescaleIntensity((0, 1), include=["video_gt"]),
             ]
         )
