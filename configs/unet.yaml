@@ -11,7 +11,7 @@ model:
       out_channels: 6
       upsample: 'deconv'
 data:
-  data_path: "data"
+  data_path: "data/128x128x128"
   train_csv: "results/train.csv"
   val_csv: "results/test.csv"
   test_csv: "results/test.csv"
