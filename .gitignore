@@ -143,3 +143,10 @@ dmypy.json
 /wandb
 /checkpoints
 /lightning_logs
+
+### MATLAB ###
+*.mlapp
+*.mlx
+
+#mp4 files
+*.mp4
